@@ -1,0 +1,72 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Create GameLift Resources
+
+# GameLift Scriptのみ事前にアップロードしてパラメータとして渡す
+Parameters:
+  GameLiftScriptId:
+    Type: String
+
+
+Resources:
+# ------------------------------------------------------------#
+# IAM User
+# ------------------------------------------------------------#
+  GameLiftTempUser:
+    Type: AWS::IAM::User
+    Properties:
+      Path: "/"
+      Policies:
+      - PolicyName: gameliftfullaccess
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - 'gamelift:*'
+            Resource:
+            - '*'
+          - Effect: Allow
+            Action:
+            - 'iam:CreateServiceLinkedRole'
+            Resource:
+            - '*'
+
+# ------------------------------------------------------------#
+#  GameLift Fleet
+# ------------------------------------------------------------#
+  GameLiftFleet:
+    Type: AWS::GameLift::Fleet
+    Properties: 
+      Name: TestFleet
+      NewGameSessionProtectionPolicy: FullProtection
+      ScriptId: !Ref GameLiftScriptId
+      Description: "Test Resource for Mltiplayer Game"
+      EC2InstanceType: "c5.large"
+      FleetType: "SPOT"
+      MetricGroups: 
+        - "GameLiftFleet"
+      CertificateConfiguration: 
+          CertificateType: DISABLED
+      ResourceCreationLimitPolicy: 
+        NewGameSessionsPerCreator: 3
+        PolicyPeriodInMinutes: 15
+      RuntimeConfiguration: 
+        GameSessionActivationTimeoutSeconds: 60
+        MaxConcurrentGameSessionActivations: 2
+        ServerProcesses: 
+          - ConcurrentExecutions: 10
+            LaunchPath: /local/game/server.js
+
+
+# ------------------------------------------------------------#
+#  GameLift Alias
+# ------------------------------------------------------------#
+  GameLiftAlias:
+    Type: AWS::GameLift::Alias
+    Properties: 
+      Description: "Alias to Fleet"
+      Name: testAlias
+      RoutingStrategy: 
+        FleetId: !Ref GameLiftFleet
+        Type: SIMPLE
+
