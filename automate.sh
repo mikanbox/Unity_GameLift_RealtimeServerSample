@@ -8,7 +8,7 @@ ScriptId=$(aws gamelift create-script --name "test" --zip-file fileb://ServerApp
 StackId=$(aws cloudformation create-stack --stack-name UnityGameLiftRealtimeSample --template-body file://AWSResources/resources.yaml --parameters ParameterKey=GameLiftScriptId,ParameterValue=$ScriptId --capabilities CAPABILITY_IAM | jq -r '.StackId')
 
 
-## StackIdからStacNameのみ抜き出す処理 (UnityGameLiftRealtimeSample2　を抜き出す処理　：　要実装)
+## StackIdからStacNameのみ抜き出す処理 (UnityGameLiftRealtimeSample2　を抜き出す処理)
 StackName=$(echo $StackId | tr '/' '\n'| head -2 | tail -1)
 
 

@@ -23,7 +23,7 @@ ScriptId=$(aws gamelift create-script --name "test" --zip-file fileb://ServerApp
 StackId=$(aws cloudformation create-stack --stack-name UnityGameLiftRealtimeSample --template-body file://AWSResources/resources.yaml --parameters ParameterKey=GameLiftScriptId,ParameterValue=$ScriptId --capabilities CAPABILITY_IAM | jq -r '.StackId')
 ```
 
-## StackIdからStacNameのみ抜き出す処理 (UnityGameLiftRealtimeSample2　を抜き出す処理　：　要実装)
+## StackIdからStacNameのみ抜き出す処理 (UnityGameLiftRealtimeSample2　を抜き出す処理)
 ```
 StackName=$(echo $StackId | tr '/' '\n'| head -2 | tail -1)
 ```
@@ -54,14 +54,14 @@ SecretAccessKey=$(echo $Result | jq -r '.AccessKey.SecretAccessKey')
 GameLiftAlias=$(aws cloudformation describe-stack-resources --stack-name $StackName | jq -r '.StackResources[]|select(.ResourceType =="AWS::GameLift::Alias")|.PhysicalResourceId')
 ```
 
-以下結果をRealTimeClientWrapper.cs に記載
+以下結果を RoomMgr.cs に記載
 ```
 echo $AccessKeyId
 echo $SecretAccessKey
 echo $GameLiftAlias
 ```
 
-記載先 RealTimeClientWrapper.cs 29行目 ~ 31行目
+記載先 RoomMgr.cs 
 ```
     string accessKeyId = "";
     string secretAccessKey = "";
@@ -69,6 +69,7 @@ echo $GameLiftAlias
 ```
 
 ## Unityビルドと実行
+SampleSceneを開く
 ビルド後、アプリケーションフォルダにて実行
 OSX
 open hoge.app -n

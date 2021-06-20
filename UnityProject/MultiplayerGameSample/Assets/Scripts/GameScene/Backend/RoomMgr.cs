@@ -39,7 +39,6 @@ public class RoomMgr {
     string gameLiftAliasId = "";
 
 
-
     public AmazonGameLiftClient gameLiftClient;
     public RealTimeClient realTimeClient;
 
